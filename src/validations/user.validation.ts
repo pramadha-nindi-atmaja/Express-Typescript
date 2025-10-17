@@ -1,5 +1,5 @@
 import Joi, { ValidationResult } from 'joi'
-import type { UserType } from '../types/user.type'
+import type UserType from '../types/user.type'
 
 export const validateUserInput = (
   payload: UserType
