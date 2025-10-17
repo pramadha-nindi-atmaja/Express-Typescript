@@ -1,25 +1,31 @@
-import joi from 'joi'
-import type BarangType from '../types/barang.type'
+import Joi, { ValidationResult } from 'joi'
+import type  BarangType  from '../types/barang.type'
 
-export const inputBarangValidation = (
+export const validateBarangInput = (
   payload: BarangType
-): joi.ValidationResult<BarangType> => {
-  const schema = joi.object({
-    nama: joi.string().trim().required().messages({
-      'string.base': 'Barang harus berupa string',
-      'string.empty': 'Barang tidak boleh kosong',
-      'any.required': 'Barang harus diisi'
-    }),
-    jumlah: joi.number().required().messages({
-      'number.base': 'Jumlah harus berupa angka',
-      'number.empty': 'Jumlah tidak boleh kosong',
-      'any.required': 'Jumlah harus diisi'
-    }),
-    harga: joi.number().required().messages({
-      'number.base': 'Harga harus berupa angka',
-      'number.empty': 'Harga tidak boleh kosong',
-      'any.required': 'Harga harus diisi'
-    })
+): ValidationResult<BarangType> => {
+  const schema = Joi.object<BarangType>({
+    nama: Joi.string()
+      .trim()
+      .required()
+      .messages({
+        'string.base': 'Nama barang harus berupa teks',
+        'string.empty': 'Nama barang tidak boleh kosong',
+        'any.required': 'Nama barang wajib diisi'
+      }),
+    jumlah: Joi.number()
+      .required()
+      .messages({
+        'number.base': 'Jumlah harus berupa angka',
+        'any.required': 'Jumlah wajib diisi'
+      }),
+    harga: Joi.number()
+      .required()
+      .messages({
+        'number.base': 'Harga harus berupa angka',
+        'any.required': 'Harga wajib diisi'
+      })
   })
-  return schema.validate(payload)
+
+  return schema.validate(payload, { abortEarly: false })
 }
