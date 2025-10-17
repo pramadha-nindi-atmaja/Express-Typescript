@@ -1,58 +1,73 @@
-import type UserType from '../types/user.type'
-import joi from 'joi'
+import Joi, { ValidationResult } from 'joi'
+import type { UserType } from '../types/user.type'
 
-export const inputUserValidation = (
+export const validateUserInput = (
   payload: UserType
-): joi.ValidationResult<UserType> => {
-  const schema = joi.object({
-    user_id: joi.string().trim().allow(null, ''),
-    email: joi.string().trim().required().email().messages({
-      'string.base': 'Email harus berupa string',
-      'string.empty': 'Email tidak boleh kosong',
-      'string.email': 'Email tidak valid',
-      'any.required': 'Email harus diisi'
-    }),
-    nama: joi.string().trim().required().messages({
-      'string.base': 'Nama harus berupa string',
-      'string.empty': 'Nama tidak boleh kosong',
-      'any.required': 'Nama harus diisi'
-    }),
-    password: joi.string().min(3).max(15).required().messages({
-      'string.base': 'Password harus berupa string',
-      'string.empty': 'Password tidak boleh kosong',
-      'string.min': 'Password minimal 3 karakter',
-      'string.max': 'Password maksimal 15 karakter',
-      'any.required': 'Password harus diisi'
-    }),
-    confirmPassword: joi
-      .any()
-      .equal(joi.ref('password'))
+): ValidationResult<UserType> => {
+  const schema = Joi.object<UserType>({
+    user_id: Joi.string().trim().allow(null, ''),
+
+    email: Joi.string()
+      .trim()
+      .email({ tlds: { allow: false } })
       .required()
-      .label('Confirm Password')
+      .messages({
+        'string.base': 'Email harus berupa teks',
+        'string.empty': 'Email tidak boleh kosong',
+        'string.email': 'Format email tidak valid',
+        'any.required': 'Email wajib diisi'
+      }),
+
+    nama: Joi.string().trim().required().messages({
+      'string.base': 'Nama harus berupa teks',
+      'string.empty': 'Nama tidak boleh kosong',
+      'any.required': 'Nama wajib diisi'
+    }),
+
+    password: Joi.string().min(6).max(20).required().messages({
+      'string.base': 'Password harus berupa teks',
+      'string.empty': 'Password tidak boleh kosong',
+      'string.min': 'Password minimal 6 karakter',
+      'string.max': 'Password maksimal 20 karakter',
+      'any.required': 'Password wajib diisi'
+    }),
+
+    confirmPassword: Joi.any()
+      .equal(Joi.ref('password'))
+      .required()
+      .label('Konfirmasi Password')
       .messages({
         'any.only': '{{#label}} tidak sama dengan password',
-        'any.required': '{{#label}} harus diisi'
+        'any.required': '{{#label}} wajib diisi'
       }),
-    role: joi.string().trim().allow(null, '')
+
+    role: Joi.string().trim().allow(null, '')
   })
-  return schema.validate(payload)
+
+  return schema.validate(payload, { abortEarly: false })
 }
 
-export const loginUserValidation = (
+export const validateUserLogin = (
   payload: UserType
-): joi.ValidationResult<UserType> => {
-  const schema = joi.object({
-    email: joi.string().trim().required().email().messages({
-      'string.base': 'Email harus berupa string',
-      'string.empty': 'Email tidak boleh kosong',
-      'string.email': 'Email tidak valid',
-      'any.required': 'Email harus diisi'
-    }),
-    password: joi.string().required().messages({
-      'string.base': 'Password harus berupa string',
+): ValidationResult<UserType> => {
+  const schema = Joi.object<UserType>({
+    email: Joi.string()
+      .trim()
+      .email({ tlds: { allow: false } })
+      .required()
+      .messages({
+        'string.base': 'Email harus berupa teks',
+        'string.empty': 'Email tidak boleh kosong',
+        'string.email': 'Format email tidak valid',
+        'any.required': 'Email wajib diisi'
+      }),
+
+    password: Joi.string().required().messages({
+      'string.base': 'Password harus berupa teks',
       'string.empty': 'Password tidak boleh kosong',
-      'any.required': 'Password harus diisi'
+      'any.required': 'Password wajib diisi'
     })
   })
-  return schema.validate(payload)
+
+  return schema.validate(payload, { abortEarly: false })
 }
