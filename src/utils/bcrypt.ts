@@ -1,12 +1,15 @@
 import bcrypt from 'bcrypt'
+
 const saltRounds = 10
 
-const encript = (password: string): string => {
-  return bcrypt.hashSync(password, saltRounds)
+// Hash password secara asynchronous
+export const encrypt = async (password: string): Promise<string> => {
+  const salt = await bcrypt.genSalt(saltRounds)
+  const hash = await bcrypt.hash(password, salt)
+  return hash
 }
 
-const compare = (password: string, hash: string): boolean => {
-  return bcrypt.compareSync(password, hash)
+// Bandingkan password dengan hash
+export const compare = async (password: string, hash: string): Promise<boolean> => {
+  return await bcrypt.compare(password, hash)
 }
-
-export { encript, compare }
