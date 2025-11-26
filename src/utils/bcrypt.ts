@@ -10,6 +10,9 @@ export const encrypt = async (password: string): Promise<string> => {
 }
 
 // Bandingkan password dengan hash
-export const compare = async (password: string, hash: string): Promise<boolean> => {
+export const compare = async (
+  password: string,
+  hash: string
+): Promise<boolean> => {
   return await bcrypt.compare(password, hash)
 }

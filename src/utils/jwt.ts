@@ -8,7 +8,8 @@ import type UserType from '../types/user.type'
  */
 export const generateAccessToken = (user: UserType): string => {
   const secret = process.env.JWT_SECRET
-  if (!secret) throw new Error('JWT_SECRET is not defined in environment variables')
+  if (!secret)
+    throw new Error('JWT_SECRET is not defined in environment variables')
 
   const options: SignOptions = {
     expiresIn: process.env.JWT_EXPIRES_IN || '1800s' // Default 30 minutes
@@ -23,7 +24,10 @@ export const generateAccessToken = (user: UserType): string => {
  */
 export const generateRefreshToken = (user: UserType): string => {
   const refreshSecret = process.env.JWT_REFRESH_SECRET
-  if (!refreshSecret) throw new Error('JWT_REFRESH_SECRET is not defined in environment variables')
+  if (!refreshSecret)
+    throw new Error(
+      'JWT_REFRESH_SECRET is not defined in environment variables'
+    )
 
   const options: SignOptions = {
     expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' // Default 7 days

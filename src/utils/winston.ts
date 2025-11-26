@@ -27,8 +27,7 @@ export const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.label({ label: '[APP LOGGER]' }),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
-    winston.format.errors({ stack: true }),
-
+    winston.format.errors({ stack: true })
   ),
   transports: [
     // Console transport
@@ -37,7 +36,7 @@ export const logger = winston.createLogger({
       handleExceptions: true,
       format: winston.format.combine(
         winston.format.colorize({ all: true }),
-        winston.format.timestamp({ format: 'HH:mm:ss' }),
+        winston.format.timestamp({ format: 'HH:mm:ss' })
       )
     }),
 
