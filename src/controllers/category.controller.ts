@@ -1,44 +1,20 @@
 import { type NextFunction, type Request, type Response } from 'express'
-import { validateBarangInput } from '../validations/barang.validation'
+import { inputCategoryValidation } from '../validations/category.validation'
 import {
-  deleteBarang,
-  getBarang,
-  getBarangById,
-  insertBarang,
-  updateBarang
-} from '../services/barang.service'
-import { getCategoryById } from '../services/category.service'
+  deleteCategory,
+  getCategories,
+  getCategoryById,
+  insertCategory,
+  updateCategory
+} from '../services/category.service'
 
-export const getAllBarang = async (
+export const getAllCategories = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
-    const data = await getBarang()
-
-    // Include category information for each item
-    if (data) {
-      const dataWithCategories = await Promise.all(
-        data.map(async (item) => {
-          if (item.categoryId) {
-            const category = await getCategoryById(item.categoryId)
-            return {
-              ...item,
-              category: category
-            }
-          }
-          return item
-        })
-      )
-
-      return res.status(200).json({
-        error: null,
-        message: 'Pengambilan semua data berhasil',
-        data: dataWithCategories
-      })
-    }
-
+    const data = await getCategories()
     return res.status(200).json({
       error: null,
       message: 'Pengambilan semua data berhasil',
@@ -47,57 +23,50 @@ export const getAllBarang = async (
   } catch (error: Error | unknown) {
     next(
       new Error(
-        'Error pada file src/controllers/barang.controller.ts: getAllBarang - ' +
+        'Error pada file src/controllers/category.controller.ts: getAllCategories - ' +
           String((error as Error).message)
       )
     )
   }
 }
 
-export const getDataBarangById = async (
+export const getDataCategoryById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
     const { id } = req.params
-    const barang = await getBarangById(parseInt(id))
-
-    // Include category information if categoryId exists
-    if (barang && barang.categoryId) {
-      const category = await getCategoryById(barang.categoryId)
-      return res.status(200).json({
-        error: null,
-        message: 'Pengambilan data sukses',
-        data: {
-          ...barang,
-          category: category
-        }
+    const category = await getCategoryById(parseInt(id))
+    if (category === null) {
+      return res.status(404).json({
+        error: 'Category tidak ditemukan',
+        message: 'Pengambilan data gagal',
+        data: null
       })
     }
-
     return res.status(200).json({
       error: null,
       message: 'Pengambilan data sukses',
-      data: barang
+      data: category
     })
   } catch (error: Error | unknown) {
     next(
       new Error(
-        'Error pada file src/controllers/barang.controller.ts : getDataBarangById - ' +
+        'Error pada file src/controllers/category.controller.ts : getDataCategoryById - ' +
           String((error as Error).message)
       )
     )
   }
 }
 
-export const insertDataBarang = async (
+export const insertDataCategory = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
-    const { error, value } = validateBarangInput(req.body)
+    const { error, value } = inputCategoryValidation(req.body)
     if (error != null) {
       return res.status(400).json({
         error: error.details[0].message,
@@ -105,30 +74,30 @@ export const insertDataBarang = async (
         data: value
       })
     }
-    const barang = await insertBarang(value)
+    const category = await insertCategory(value)
     return res.status(200).json({
       error: null,
       message: 'Input data sukses',
-      data: barang
+      data: category
     })
   } catch (error: Error | unknown) {
     next(
       new Error(
-        'Error pada file src/controllers/barang.controller.ts : insertDataBarang - ' +
+        'Error pada file src/controllers/category.controller.ts : insertDataCategory - ' +
           String((error as Error).message)
       )
     )
   }
 }
 
-export const updateDataBarang = async (
+export const updateDataCategory = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
     const { id } = req.params
-    const { error, value } = validateBarangInput(req.body)
+    const { error, value } = inputCategoryValidation(req.body)
     if (error != null) {
       return res.status(400).json({
         error: error.details[0].message,
@@ -136,7 +105,7 @@ export const updateDataBarang = async (
         data: value
       })
     }
-    const data = await updateBarang({ ...value, id: parseInt(id) })
+    const data = await updateCategory({ ...value, id: parseInt(id) })
     return res.status(200).json({
       error: null,
       message: 'Update data sukses',
@@ -145,21 +114,21 @@ export const updateDataBarang = async (
   } catch (error: Error | unknown) {
     next(
       new Error(
-        'Error pada file src/controllers/barang.controller.ts : updateDataBarang - ' +
+        'Error pada file src/controllers/category.controller.ts : updateDataCategory - ' +
           String((error as Error).message)
       )
     )
   }
 }
 
-export const deleteDataBarang = async (
+export const deleteDataCategory = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
     const { id } = req.params
-    const data = await deleteBarang(parseInt(id))
+    const data = await deleteCategory(parseInt(id))
     return res.status(200).json({
       error: null,
       message: 'Delete data sukses',
@@ -168,7 +137,7 @@ export const deleteDataBarang = async (
   } catch (error: Error | unknown) {
     next(
       new Error(
-        'Error pada file src/controllers/barang.controller.ts : deleteDataBarang - ' +
+        'Error pada file src/controllers/category.controller.ts : deleteDataCategory - ' +
           String((error as Error).message)
       )
     )

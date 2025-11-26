@@ -1,9 +1,9 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import {
-  inputUserValidation,
-  loginUserValidation
+  validateUserInput,
+  validateUserLogin
 } from '../validations/user.validation'
-import { compare, encript } from '../utils/bcrypt'
+import { compare, encrypt } from '../utils/bcrypt'
 import { createUser, userLogin } from '../services/user.service'
 import {
   generateAccessToken,
@@ -18,7 +18,7 @@ export const registerUser = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
-    const { error, value } = inputUserValidation(req.body)
+    const { error, value } = validateUserInput(req.body)
     if (error != null) {
       return res.status(400).json({
         error: error.details[0].message,
@@ -26,8 +26,8 @@ export const registerUser = async (
         data: value
       })
     }
-    // encript password
-    value.password = encript(value.password)
+    // encrypt password
+    value.password = await encrypt(value.password)
     delete value.confirmPassword
     const user = await createUser(value)
     return res.status(200).json({
@@ -51,7 +51,7 @@ export const loginUser = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
-    const { error, value } = loginUserValidation(req.body)
+    const { error, value } = validateUserLogin(req.body)
     if (error != null) {
       return res.status(400).json({
         error: error.details[0].message,
@@ -67,7 +67,7 @@ export const loginUser = async (
         data: null
       })
     }
-    if (!compare(value.password, user.password)) {
+    if (!compare(value.password, user.password ?? '')) {
       return res.status(400).json({
         error: 'Password salah',
         message: 'Login gagal',
@@ -80,9 +80,15 @@ export const loginUser = async (
     //   nama: user.nama,
     //   role: user.role
     // }
-    user.password = 'xxxxxx'
-    const acessToken = generateAccessToken(user)
-    const refreshToken = generateRefreshToken(user)
+    const fullUser = {
+      user_id: user.user_id ?? '',
+      email: user.email ?? '',
+      nama: user.nama ?? '',
+      password: 'xxxxxx',
+      role: user.role ?? 'regular'
+    }
+    const acessToken = generateAccessToken(fullUser)
+    const refreshToken = generateRefreshToken(fullUser)
     return res.status(200).json({
       error: null,
       message: 'Login sukses',
@@ -132,9 +138,15 @@ export const refreshToken = async (
         data: null
       })
     }
-    user.password = 'xxxxxx'
-    const acessToken = generateAccessToken(user)
-    const refreshToken = generateRefreshToken(user)
+    const fullUser = {
+      user_id: user.user_id ?? '',
+      email: user.email ?? '',
+      nama: user.nama ?? '',
+      password: 'xxxxxx',
+      role: user.role ?? 'regular'
+    }
+    const acessToken = generateAccessToken(fullUser)
+    const refreshToken = generateRefreshToken(fullUser)
     return res.status(200).json({
       error: null,
       message: 'Refresh token berhasil',

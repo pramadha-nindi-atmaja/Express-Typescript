@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import { logger } from '../utils/winston'
-import { verifyAcessToken } from '../utils/jwt'
+import { verifyAccessToken } from '../utils/jwt'
 
 export const errorHandling = (
   err: Error,
@@ -38,7 +38,7 @@ export const autenticate = (
       data: null
     })
   }
-  const user = verifyAcessToken(String(token))
+  const user = verifyAccessToken(String(token))
   if (user === null) {
     return res.status(401).json({
       error: 'Token tidak valid',
