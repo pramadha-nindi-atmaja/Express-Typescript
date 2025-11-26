@@ -7,7 +7,11 @@ import prisma from '../utils/client'
  */
 export const getBarang = async (): Promise<BarangType[] | null> => {
   try {
-    const data = await prisma.barang.findMany()
+    const data = await prisma.barang.findMany({
+      include: {
+        category: true
+      }
+    })
     return data.length > 0 ? data : null
   } catch (error) {
     console.error('❌ Error fetching all barang:', error)
@@ -22,7 +26,12 @@ export const getBarang = async (): Promise<BarangType[] | null> => {
  */
 export const getBarangById = async (id: number): Promise<BarangType | null> => {
   try {
-    const data = await prisma.barang.findUnique({ where: { id } })
+    const data = await prisma.barang.findUnique({
+      where: { id },
+      include: {
+        category: true
+      }
+    })
     return data
   } catch (error) {
     console.error(`❌ Error fetching barang with ID ${id}:`, error)

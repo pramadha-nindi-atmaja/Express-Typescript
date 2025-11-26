@@ -3,7 +3,7 @@ import prisma from '../utils/client'
 
 /**
  * Create a new user in the database.
- * 
+ *
  * @param payload - User data payload (excluding auto-generated fields)
  * @returns Created user object
  */
@@ -25,7 +25,7 @@ export const createUser = async (
 
 /**
  * Find a user by email for login process.
- * 
+ *
  * @param payload - User credentials (email required)
  * @returns User object or null if not found
  */
@@ -39,7 +39,7 @@ export const userLogin = async (
 
     // Hide sensitive data (e.g., password)
     if (!user) return null
-    const { password, ...safeUser } = user
+    const { ...safeUser } = user
     return safeUser
   } catch (error) {
     console.error('❌ Error during user login:', error)
