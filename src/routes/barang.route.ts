@@ -20,7 +20,6 @@ import {
 // Middleware (authentication / error handling)
 import { autenticate } from '../controllers/error.controller'
 
-
 const barangRouter = Router()
 
 /**
