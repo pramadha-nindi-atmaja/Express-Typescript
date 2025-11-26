@@ -5,8 +5,8 @@
  * - CORS configuration
  * - JSON parsing
  * - Route mounting
- * 
- * All incoming requests will pass through these middlewares before 
+ *
+ * All incoming requests will pass through these middlewares before
  * reaching specific route handlers.
  */
 
@@ -23,7 +23,7 @@ const appMiddleware = express()
  * --------------------------------------------
  * Allows frontend apps from different origins to communicate
  * with this backend API securely.
- * 
+ *
  * - origin: true → dynamically allows requests from any origin
  * - credentials: true → enables cookies / authorization headers
  * - methods: defines allowed HTTP methods
